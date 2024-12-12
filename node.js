@@ -1,11 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose(); // Using SQLite for simplicity
+const helmet = require("helmet");
 
 const app = express();
 const db = new sqlite3.Database(':memory:');
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(helmet.hidePoweredBy());
 
 db.serialize(() => {
     db.run('CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)');
