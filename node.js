@@ -1,11 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose(); // Using SQLite for simplicity
+const helmet = require("helmet");
 
 const app = express();
 const db = new sqlite3.Database(':memory:');
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(helmet.hidePoweredBy());
 
 db.serialize(() => {
     db.run('CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)');
@@ -13,8 +15,8 @@ db.serialize(() => {
 });
 app.get('/login', (req, res) => {
     const { username, password } = req.query;
-    const sql = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
-    db.all(sql, [], (err, rows) => {
+    const sql = `SELECT * FROM users WHERE username = ? AND password = ?`; // Updated query
+    db.all(sql, [username, password], (err, rows) => { // Updated parameters
         if (rows.length > 0) {
             res.send('Login successful!');
         } else {
@@ -25,12 +27,15 @@ app.get('/login', (req, res) => {
 
 app.get('/greet', (req, res) => {
     const name = req.query.name || 'Guest';
-    res.send(`<h1>Welcome, ${name}!</h1>`);
+    res.set('Content-Type', 'text/plain'); // Set content-type header
+    res.send(`Welcome, ${name}!`);
 });
 
 app.get('/redirect', (req, res) => {
-    const { url ,url2 } = req.query;
-    res.redirect(url);
+    const { url } = req.query; // Removed unused variable 'url2'
+    if (url.startsWith("https://www.example.com/")) {
+        res.redirect(url);
+    }
 });
 
 app.post('/deserialize', (req, res) => {
