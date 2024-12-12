@@ -1,4 +1,3 @@
-
 const express = require('express');
 const { add, subtract } = require('./mathOperations');
 const { logMessage } = require('./logger');
@@ -25,7 +24,7 @@ app.listen(port, () => {
 });
 
 // file: test.js
-const { add, subtract } = require('./mathOperations');
+const { add: addAlias, subtract: subtractAlias } = require('./mathOperations');
 
-console.log(add(2, 3)); 
-console.log(subtract(5, 2));
+console.log(addAlias(2, 3)); 
+console.log(subtractAlias(5, 2));
