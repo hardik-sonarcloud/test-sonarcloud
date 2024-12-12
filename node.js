@@ -25,7 +25,8 @@ app.get('/login', (req, res) => {
 
 app.get('/greet', (req, res) => {
     const name = req.query.name || 'Guest';
-    res.send(`<h1>Welcome, ${name}!</h1>`);
+    res.set('Content-Type', 'text/plain'); // Set content-type header
+    res.send(`Welcome, ${name}!`);
 });
 
 app.get('/redirect', (req, res) => {
